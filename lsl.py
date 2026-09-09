@@ -20,20 +20,25 @@ buffer = CircularBuffer(FS * BUFFER_SEC, N_CHANNELS)
 
 plt.ion()
 fig, ax = plt.subplots()
-latencies = []
-samples = [] 
-timestamps = []
-n = 250 * 5
-for _ in range(n):
+n = 250 * 60
+latencies = np.zeros(n)
+samples = np.zeros((n, N_CHANNELS))
+timestamps = np.zeros(n)
+
+for s in range(n):
     sample, timestamp = inlet.pull_sample()
+
+    # multiply by -50 mV for channel spacing
     for idx, channel_value in enumerate(sample):
         sample[idx] = channel_value + (idx * -50.0)
+
     buffer.append(sample)
     data = buffer.get()
     latency = pylsl.local_clock() - timestamp
-    latencies.append(latency)
-    samples.append(sample)
-    timestamps.append(timestamp)
+    
+    latencies[s] = latency
+    samples[s] = sample
+    timestamps[s] = timestamp
         
 
     ax.clear()
@@ -41,3 +46,15 @@ for _ in range(n):
     ax.set_title("Live EEG (Simulated)")
     plt.pause(0.01)
 
+data = buffer.get()
+throughput = len(timestamps) / (timestamps[-1] - timestamps[0])
+intervals = np.diff(timestamps)
+
+jitter = np.std(intervals) * 1000.0
+
+mean_latency = sum(latencies)/len(latencies)
+
+print("DIAGNOSTIC BREAKDOWN:\n")
+print(f"Effective Throughput: {throughput:.2f} Hz")
+print(f"Inter-Sample Jitter:  {jitter:.4f} ms")
+print(f"Mean Latency:         {mean_latency:.4f} s")
