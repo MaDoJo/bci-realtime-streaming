@@ -26,21 +26,18 @@ timestamps = []
 n = 250 * 5
 for _ in range(n):
     sample, timestamp = inlet.pull_sample()
+    for idx, channel_value in enumerate(sample):
+        sample[idx] = channel_value + (idx * -50.0)
     buffer.append(sample)
     data = buffer.get()
     latency = pylsl.local_clock() - timestamp
     latencies.append(latency)
     samples.append(sample)
     timestamps.append(timestamp)
-    
+        
 
-
-    offsets = np.arange(num_channels) * 50
-
-    spaced_data = data + offsets.reshape(-1, 1)
-    print(len(data))
     ax.clear()
-    ax.plot(spaced_data)
+    ax.plot(data)
     ax.set_title("Live EEG (Simulated)")
     plt.pause(0.01)
 
