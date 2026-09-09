@@ -26,7 +26,7 @@ timestamps = np.zeros(n)
 for s in range(n):
     sample, timestamp = inlet.pull_sample()
 
-    # multiply by -50 mV for channel spacing
+    # multiply channel index by -50 mV for channel spacing
     for idx, channel_value in enumerate(sample):
         sample[idx] = channel_value + (idx * -50.0)
 
@@ -37,7 +37,8 @@ for s in range(n):
     latencies[s] = latency
     samples[s] = sample
     timestamps[s] = timestamp
-        
+
+    # plotting code (causes latency)
     ax.clear()
     ax.plot(data)
     ax.set_title("Live EEG (Simulated)")
