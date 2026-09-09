@@ -24,7 +24,7 @@ class EEGVisualizer(QtWidgets.QMainWindow):
         # 2. Setup Data Windows (Keep history small to save memory)
         self.buffer = CircularBuffer(FS * BUFFER_SEC, N_CHANNELS)
         
-        self.n = 250 * 60
+        self.n = 250 * 60 
         self.s = 0
         self.latencies = np.zeros(self.n)
         self.samples = np.zeros((self.n, N_CHANNELS))
@@ -66,8 +66,9 @@ class EEGVisualizer(QtWidgets.QMainWindow):
             
             self.s += 1
             samples_pulled += 1
-            
-            if self.s >= self.n:
+
+            #if self.s >= self.n:
+            if timestamp - self.timestamps[0] > 10.0: 
                 self.timer.stop()
                 self.run_analysis()
                 return
@@ -80,10 +81,11 @@ class EEGVisualizer(QtWidgets.QMainWindow):
                 self.curves[i].setData(data[:, i])
                 
     def run_analysis(self):
-        throughput = len(self.timestamps) / (self.timestamps[-1] - self.timestamps[0])
-        intervals = np.diff(self.timestamps)
-        jitter = np.std(intervals) * 1000.0
-        mean_latency = np.mean(self.latencies)
+        throughput = self.s / (self.timestamps[self.s - 1] - self.timestamps[0])
+        print(self.s)
+        intervals = np.diff(self.timestamps[:self.s])
+        jitter = np.std(intervals[:self.s]) * 1000.0
+        mean_latency = np.mean(self.latencies[:self.s])
 
         print("DIAGNOSTIC BREAKDOWN:\n")
         print(f"Effective Throughput: {throughput:.2f} Hz")
