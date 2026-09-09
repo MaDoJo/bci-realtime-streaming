@@ -33,7 +33,8 @@ for s in range(n):
     buffer.append(sample)
     data = buffer.get()
     latency = pylsl.local_clock() - timestamp
-    
+
+    # store raw values for post run analysis
     latencies[s] = latency
     samples[s] = sample
     timestamps[s] = timestamp
