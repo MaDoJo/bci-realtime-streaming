@@ -1,5 +1,3 @@
-
-# use pylsl local_clock() function 
 """
 Live visualization of EEG stream
 """
@@ -40,19 +38,15 @@ for s in range(n):
     samples[s] = sample
     timestamps[s] = timestamp
         
-
     ax.clear()
     ax.plot(data)
     ax.set_title("Live EEG (Simulated)")
     plt.pause(0.01)
 
-data = buffer.get()
 throughput = len(timestamps) / (timestamps[-1] - timestamps[0])
 intervals = np.diff(timestamps)
-
 jitter = np.std(intervals) * 1000.0
-
-mean_latency = sum(latencies)/len(latencies)
+mean_latency = np.mean(latencies)
 
 print("DIAGNOSTIC BREAKDOWN:\n")
 print(f"Effective Throughput: {throughput:.2f} Hz")
