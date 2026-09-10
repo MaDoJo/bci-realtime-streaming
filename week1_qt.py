@@ -49,9 +49,10 @@ while pylsl.local_clock() - start_time < DURATION:
 throughput = len(timestamps) / (timestamps[-1] - timestamps[0])
 intervals = np.diff(timestamps)
 jitter = np.std(intervals) * 1000.0
-mean_latency = np.mean(latencies)
+mean_latency = np.mean(latencies) * 1000.0
 
 print("DIAGNOSTIC BREAKDOWN:\n")
+print(f"Samples Processed: {len(timestamps)}")
 print(f"Effective Throughput: {throughput:.2f} Hz")
 print(f"Inter-Sample Jitter:  {jitter:.4f} ms")
-print(f"Mean Latency:         {mean_latency:.4f} s")
+print(f"Mean Latency:         {mean_latency:.4f} ms")

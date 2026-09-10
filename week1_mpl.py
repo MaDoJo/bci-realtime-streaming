@@ -68,7 +68,7 @@ class EEGVisualizer(QtWidgets.QMainWindow):
             samples_pulled += 1
 
             #if self.s >= self.n:
-            if timestamp - self.timestamps[0] > 10.0: 
+            if timestamp - self.timestamps[0] > 60: 
                 self.timer.stop()
                 self.run_analysis()
                 return
@@ -82,15 +82,15 @@ class EEGVisualizer(QtWidgets.QMainWindow):
                 
     def run_analysis(self):
         throughput = self.s / (self.timestamps[self.s - 1] - self.timestamps[0])
-        print(self.s)
         intervals = np.diff(self.timestamps[:self.s])
         jitter = np.std(intervals[:self.s]) * 1000.0
-        mean_latency = np.mean(self.latencies[:self.s])
+        mean_latency = np.mean(self.latencies[:self.s]) * 1000.0
 
         print("DIAGNOSTIC BREAKDOWN:\n")
+        print(f"Samples Processed: {self.s}")
         print(f"Effective Throughput: {throughput:.2f} Hz")
         print(f"Inter-Sample Jitter:  {jitter:.4f} ms")
-        print(f"Mean Latency:         {mean_latency:.4f} s")
+        print(f"Mean Latency:         {mean_latency:.4f} ms")
         
         QtWidgets.QApplication.quit()
 
